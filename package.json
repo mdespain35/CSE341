@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon section02/app.js"
   },
   "dependencies": {
     "ejs": "^3.1.6",
