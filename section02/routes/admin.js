@@ -7,12 +7,12 @@ const adminCon = require('../controllers/admin')
 const router = express.Router();
 
 // /admin/add-product => GET
-router.get(adminCon.getAddProduct);
+router.get('/add-product', adminCon.getAddProduct);
 
 // /admin/add-product => POST
-router.post(adminCon.postAddProduct);
+router.post('/add-product', adminCon.postAddProduct);
 
 // /admin/products => GET
 router.get('/products', adminCon.getProducts)
 
-exports.routes = router;
+module.exports = router;
