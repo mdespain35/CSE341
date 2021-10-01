@@ -10,7 +10,11 @@ router.get('/', shopCon.getIndex);
 
 router.get('/products', shopCon.getProducts);
 
+router.get('/products/:productId', shopCon.getProduct);
+
 router.get('/cart', shopCon.getCart);
+
+router.post('/cart', shopCon.postCart);
 
 router.get('/checkout', shopCon.getCheckout)
 
