@@ -2,10 +2,27 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const errorCon = require('./controllers/error')
 
 const app = express();
+
+const corsOptions = {
+    origin: "https://mdespain-341.herokuapp.com/",
+    optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
+
+const options = {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+    family: 4
+};
+
+const MONGODB_URL = process.env.MONGODB_URL || "mongodb+srv://Player1:FoodisGood@cluster0.fbsbe.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
 app.set('view engine', 'ejs');
 app.set('views', 'section02/views');
@@ -22,4 +39,14 @@ app.use(shopRoutes);
 
 app.use(errorCon.get404);
 
-app.listen(port);
+mongoose
+  .connect(
+    MONGODB_URL, options
+  )
+  .then(result => {
+     // This should be your user handling code implement following the course videos
+    app.listen(port);
+  })
+  .catch(err => {
+    console.log(err);
+  });
