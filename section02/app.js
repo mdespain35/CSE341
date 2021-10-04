@@ -12,6 +12,7 @@ app.set('views', 'section02/views');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const port = process.env.PORT || 3000;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -21,4 +22,4 @@ app.use(shopRoutes);
 
 app.use(errorCon.get404);
 
-app.listen(3000);
+app.listen(port);
