@@ -4,7 +4,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
-const errorCon = require('./controllers/error')
+const errorCon = require('./controllers/error');
+const mongoConnect = require('./util/database').mongoConnect;
 
 const app = express();
 
@@ -38,6 +39,10 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
 app.use(errorCon.get404);
+
+mongoConnect(() => {
+  app.listen(3000);
+})
 
 mongoose
   .connect(
