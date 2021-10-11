@@ -6,6 +6,7 @@ const cors = require('cors');
 
 const errorCon = require('./controllers/error');
 const mongoConnect = require('./util/database').mongoConnect;
+const User = require('./models/user');
 
 const app = express();
 
@@ -34,6 +35,15 @@ const port = process.env.PORT || 3000;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((req, res, next) => {
+  User.findById(1)
+    .then(user => {
+      req.user = new User(user.name, user.email, user.cart, user._id);
+      next();
+    })
+    .catch(err => console.log(err));
+});
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
