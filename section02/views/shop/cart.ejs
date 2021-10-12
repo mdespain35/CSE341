@@ -6,7 +6,7 @@
         <main>
             <% if (products.length > 0) { %>
                 <ul>
-                    <% products.foreach(p => { %>
+                    <% products.forEach(p => { %>
                         <li>
                            <h1><%= p.productId.title %></h1> 
                            <h2><%= p.quantity %></h2>
