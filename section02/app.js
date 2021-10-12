@@ -6,7 +6,6 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 
 const errorCon = require('./controllers/error');
-const mongoConnect = require('./util/database').mongoConnect;
 const User = require('./models/user');
 
 const app = express();
@@ -40,7 +39,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use((req, res, next) => {
   User.findById(1)
     .then(user => {
-      req.user = new User(user.name, user.email, user.cart, user._id);
+      req.user = user;
       next();
     })
     .catch(err => console.log(err));
@@ -51,16 +50,24 @@ app.use(shopRoutes);
 
 app.use(errorCon.get404);
 
-mongoConnect(() => {
-  app.listen(3000);
-})
-
 mongoose
   .connect(
     MONGODB_URL, options
   )
   .then(result => {
      // This should be your user handling code implement following the course videos
+     User.findOne().then(user => {
+       if (!user) {
+        const user = new User({
+          name: 'Gorburger',
+          email: 'gorbieburgie@test.com',
+          cart: {
+            items: []
+          }
+        });
+       }
+     });
+     user.save();
     app.listen(port);
   })
   .catch(err => {
