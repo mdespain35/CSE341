@@ -37,7 +37,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-  User.findById(1)
+  User.findById('6165c90ecf7fcff2d6185517')
     .then(user => {
       req.user = user;
       next();
@@ -52,11 +52,11 @@ app.use(errorCon.get404);
 
 mongoose
   .connect(
-    MONGODB_URL, options
+    MONGODB_URL//, options
   )
   .then(result => {
      // This should be your user handling code implement following the course videos
-     User.findOne().then(user => {
+      User.findOne().then(user => {
        if (!user) {
         const user = new User({
           name: 'Gorburger',
@@ -65,9 +65,9 @@ mongoose
             items: []
           }
         });
+        user.save()
        }
      });
-     user.save();
     app.listen(port);
   })
   .catch(err => {
