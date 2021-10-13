@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const session = require('express-session');
 
 const errorCon = require('./controllers/error');
 const User = require('./models/user');
@@ -36,6 +37,7 @@ const port = process.env.PORT || 3000;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({secret: 'my secret', resave: false, saveUninitialized: false}));
 
 app.use((req, res, next) => {
   User.findById('6165c90ecf7fcff2d6185517')
