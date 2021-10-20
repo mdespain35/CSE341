@@ -70,18 +70,6 @@ mongoose
   )
   .then(result => {
      // This should be your user handling code implement following the course videos
-      User.findOne().then(user => {
-       if (!user) {
-        const user = new User({
-          name: 'Gorburger',
-          email: 'gorbieburgie@test.com',
-          cart: {
-            items: []
-          }
-        });
-        user.save()
-       }
-     });
     app.listen(port);
   })
   .catch(err => {
