@@ -1,6 +1,9 @@
 const bcrypt = require('bcryptjs');
+const sgMail = require('@sendgrid/mail');
 
 const User = require('../models/user');
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 exports.getLogin = (req, res, next) => {
   let message = req.flash('error');
@@ -90,4 +93,19 @@ exports.postLogout = (req, res, next) => {
   req.session.destroy(() => {
     res.redirect('/');
   });
-}
+};
+
+exports.getReset = (req, res, next) => {
+  let message = req.flash('error');
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+  res.render('auth/reset', {
+    path: '/reset',
+    pageTitle: 'Reset Password',
+    isAuthenticated: false,
+    errorMessage: message
+  });
+};
