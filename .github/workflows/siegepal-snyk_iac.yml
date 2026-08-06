@@ -1,4 +1,4 @@
-name: SiegePal Checkov
+name: SiegePal Snyk IaC
 on:
   workflow_dispatch:
 permissions:
@@ -7,28 +7,27 @@ permissions:
   actions: read
   checks: write
 jobs:
-  checkov:
+  snyk-iac:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - name: Install Checkov
-        run: pip install --disable-pip-version-check --no-cache-dir checkov
-      - name: Run Checkov
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+      - name: Run Snyk IaC
         id: scan
         continue-on-error: true
-        run: checkov -d . -o sarif --output-file-path console,checkov.sarif
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk iac test --sarif-file-output=snyk-iac.sarif
       - name: Upload SARIF
         if: always()
         continue-on-error: true
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: checkov.sarif
+          sarif_file: snyk-iac.sarif
       - name: Upload artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: siegepal-checkov-results
-          path: checkov.sarif
+          name: siegepal-snyk_iac-results
+          path: snyk-iac.sarif
