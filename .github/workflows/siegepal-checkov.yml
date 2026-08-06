@@ -1,0 +1,43 @@
+name: SiegePal Checkov
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+  checks: write
+jobs:
+  checkov:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Checkov
+        run: pip install --disable-pip-version-check --no-cache-dir checkov
+      - name: Run Checkov
+        id: scan
+        continue-on-error: true
+        run: checkov -d . -o sarif --output-file-path console,checkov.sarif
+      - name: Upload SARIF
+        if: always()
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: checkov.sarif
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: siegepal-checkov-results
+          path: checkov.sarif
+      - name: Notify SiegePal
+        continue-on-error: true
+        env:
+          SIEGEPAL_CALLBACK_URL: "https://fkifoxniqz.a.pinggy.link/github/scan-callback/?token=9yZCE1o7luvFZzcTYQYtQ2fJa91HZitbR6gJEK3JnoQ"
+        run: >
+          curl -sS -X POST "$SIEGEPAL_CALLBACK_URL"
+          -H "Content-Type: application/json"
+          -d '{"repository":"mdespain35/CSE341","run_id":"${{ github.run_id }}","category":"iac"}'
+          || true

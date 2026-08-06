@@ -1,0 +1,42 @@
+name: SiegePal Snyk Code
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+  checks: write
+jobs:
+  snyk-code:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+      - name: Run Snyk Code (SAST)
+        id: scan
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk code test --sarif-file-output=snyk-code.sarif
+      - name: Upload SARIF
+        if: always()
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: snyk-code.sarif
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: siegepal-snyk_code-results
+          path: snyk-code.sarif
+      - name: Notify SiegePal
+        continue-on-error: true
+        env:
+          SIEGEPAL_CALLBACK_URL: "https://fkifoxniqz.a.pinggy.link/github/scan-callback/?token=9yZCE1o7luvFZzcTYQYtQ2fJa91HZitbR6gJEK3JnoQ"
+        run: >
+          curl -sS -X POST "$SIEGEPAL_CALLBACK_URL"
+          -H "Content-Type: application/json"
+          -d '{"repository":"mdespain35/CSE341","run_id":"${{ github.run_id }}","category":"sast"}'
+          || true
