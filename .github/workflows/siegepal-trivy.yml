@@ -30,12 +30,3 @@ jobs:
         with:
           name: siegepal-trivy-results
           path: trivy.sarif
-      - name: Notify SiegePal
-        continue-on-error: true
-        env:
-          SIEGEPAL_CALLBACK_URL: "https://fkifoxniqz.a.pinggy.link/github/scan-callback/?token=9yZCE1o7luvFZzcTYQYtQ2fJa91HZitbR6gJEK3JnoQ"
-        run: >
-          curl -sS -X POST "$SIEGEPAL_CALLBACK_URL"
-          -H "Content-Type: application/json"
-          -d '{"repository":"mdespain35/CSE341","run_id":"${{ github.run_id }}","category":"sca"}'
-          || true
